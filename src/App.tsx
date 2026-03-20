@@ -15,7 +15,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   useEffect(() => {
-    if (window.__TAURI_INTERNALS__) {
+    if ((window as any).__TAURI_INTERNALS__) {
       checkForUpdate();
     }
   }, []);
