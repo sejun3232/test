@@ -19,11 +19,9 @@ jobs:
             const repo = 'music-dashboard';
             const tag = context.ref.replace('refs/tags/', '');
 
-            // Get default branch SHA
             const { data: repoData } = await github.rest.repos.get({ owner, repo });
             const { data: ref } = await github.rest.git.getRef({ owner, repo, ref: `heads/${repoData.default_branch}` });
 
-            // Create tag
             try {
               await github.rest.git.createRef({ owner, repo, ref: `refs/tags/${tag}`, sha: ref.object.sha });
               console.log(`Tag ${tag} created`);
@@ -40,8 +38,15 @@ jobs:
     permissions:
       contents: write
     strategy:
+      fail-fast: false
       matrix:
-        platform: [windows-latest, macos-latest, macos-13]
+        include:
+          - platform: windows-latest
+            args: ""
+          - platform: macos-latest
+            args: "--target aarch64-apple-darwin"
+          - platform: macos-latest
+            args: "--target x86_64-apple-darwin"
     runs-on: ${{ matrix.platform }}
 
     steps:
@@ -52,6 +57,8 @@ jobs:
           node-version: 20
 
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
 
       - name: Install frontend dependencies
         run: npm ci
@@ -70,3 +77,4 @@ jobs:
           releaseBody: "자동 업데이트를 통해 업데이트됩니다."
           releaseDraft: false
           prerelease: false
+          args: ${{ matrix.args }}
