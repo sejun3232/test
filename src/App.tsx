@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import CallbackPage from "./pages/CallbackPage";
 import GuildSelectPage from "./pages/GuildSelectPage";
 import MusicPage from "./pages/MusicPage";
+import { checkForUpdate } from "./services/updater";
 import "./index.css";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -12,6 +14,12 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    if (window.__TAURI_INTERNALS__) {
+      checkForUpdate();
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
