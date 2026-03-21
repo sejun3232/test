@@ -93,10 +93,11 @@ jobs:
         with:
           owner: sejun3232
           repo: music-dashboard
-          tagName: v__VERSION__
-          releaseName: "Music Dashboard v__VERSION__"
+          tagName: ${{ github.ref_name }}
+          releaseName: "Music Dashboard ${{ github.ref_name }}"
           releaseBody: "자동 업데이트를 통해 업데이트됩니다."
           releaseDraft: false
           prerelease: false
+          releaseCommitish: main
           args: ${{ matrix.args }}
           tauriScript: npx tauri
